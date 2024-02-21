@@ -1,0 +1,28 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+long long dp[50+5][50+5];
+
+int main() {
+    int n, k, m;
+    while(scanf("%d%d%d", &k, &n, &m)){ //k條數 n區域數 m最多條數
+        memset(dp, 0, sizeof(dp));
+        
+        dp[0][0] = 1; //dp[a][b]表示a個區域放b條的可能數
+        for(int j = 1; j <= k; j++){
+            dp[0][j] = 0;
+        }
+        for(int i = 1; i <= n; i++){
+            for(int j = i; j <= k; j++){
+                for(int r = 1; r <= m; r++){
+                    if(j-r >= 0){
+                        dp[i][j] += dp[i-1][j-r];
+                    }
+                }
+            }
+        }
+        printf("%lld\n", dp[n][k]);
+    }
+}
