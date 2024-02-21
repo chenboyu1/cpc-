@@ -1,0 +1,25 @@
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    long long n, m;
+    int cas;
+    scanf("%d", &cas);
+    
+    while(cas--){
+        scanf("%lld%lld", &n, &m);
+        if(n == m+1){
+            printf("%d\n", m);
+            continue;
+        }
+        long long cnt = 0, edge = m;
+        while(edge >= m-cnt)
+        {
+            edge = (--n)*(n-1) / 2;
+            cnt++;
+        }
+        cnt--;
+        printf("%lld\n", cnt);
+    }
+}
