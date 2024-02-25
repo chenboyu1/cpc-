@@ -1,0 +1,41 @@
+#include <iostream> // 兩點若有同個終點，則兩點的所有終點必須相同
+#include <cstring>
+
+using namespace std;
+
+int main() {
+    int n, m, k, a, b, cnt = 1;
+    int edge[305][305];
+    scanf("%d", &n);
+    
+    while(n--)
+    {   
+        memset(edge, 0, sizeof(edge));
+        bool cas = true;
+        printf("Case #%d: ", cnt++);
+        
+        scanf("%d%d", &m, &k);
+        for(int i = 0; i < k; i++){
+            scanf("%d%d", &a, &b);
+            edge[a][b] = 1;
+        }
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < m; j++){
+                if(i != j){
+                    bool fiona = false, leon = false;
+                    for(int k = 0; k < m; k++){
+                        if(edge[i][k] & edge[j][k]) fiona = true;
+                        if(edge[i][k] ^ edge[j][k]) leon = true; // xor
+                    }
+                    if(fiona && leon){
+                        cas = false;
+                        printf("No\n");
+                        break;
+                    } 
+                }
+            }
+            if(!cas) break;
+        }
+        if(cas) printf("Yes\n");
+    }
+}
