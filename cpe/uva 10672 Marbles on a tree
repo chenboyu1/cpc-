@@ -1,0 +1,50 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <cstring>
+#include <cmath>
+
+using namespace std;
+
+int main() {
+    int n, v, d, child;
+    int bub[10005], pa[10005], deg[10005];
+    while(scanf("%d", &n) && n)
+    {
+        int ans = 0;
+        queue<int> q;
+
+        memset(bub, 0, sizeof(bub));
+        memset(pa, 0, sizeof(pa));
+        memset(deg, 0, sizeof(deg));
+        
+        for(int i = 0; i < n; i++){
+            scanf("%d", &v);
+            scanf("%d%d", &bub[v], &d);
+            deg[v] = d; // 子節點數
+            if(d == 0){
+                q.push(v);
+            }
+            else{
+                for(int j = 0; j < d; j++){
+                    scanf("%d", &child);
+                    pa[child] = v;
+                }
+            }
+        }
+        while(!q.empty()){
+            v = q.front();
+            q.pop();
+            if(pa[v] == 0){
+                break;
+            }
+            ans += abs(1-bub[v]);
+            int parent = pa[v];
+            bub[parent] += (bub[v] - 1);
+            if(--deg[parent] == 0){
+                q.push(parent);
+            }
+        }
+        printf("%d\n", ans);
+    }
+}
