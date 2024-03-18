@@ -1,0 +1,63 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    int cas;
+    scanf("%d", &cas);
+    
+    while(cas--)
+    {
+        string L;
+        int N, num;
+        cin >> ws;
+        cin >> L;
+        scanf("%d%d", &N, &num);
+        //cout << L << endl;
+        while(num--){
+            string text;
+            vector<char> ans;
+            cin >> text;
+            //cout << text << endl;
+            int m = 0, tmp;
+            bool err = false;
+            for(int i = 0; i < text.size(); i++){
+                if(text[i] == ' '){
+                    ans.emplace_back(' ');
+                }
+                else if(text[i] == L[m]){
+                    if(text[i+2] != L[(m+1) % L.size()]){
+                        err = true;
+                        break;
+                    }
+                    tmp = (text[i+1] - 'A' - N + 26) % 26;
+                    ans.emplace_back((char)('A' + tmp));
+                    i += 2;
+                    m = (m + 1) % L.size();
+                }
+                else{
+                    tmp = (text[i] - 'A' - N + 26) % 26;
+                    if(L.find((char)('A' + tmp)) < L.size()){
+                        err = true;
+                        break;
+                    }
+                    else{
+                        ans.emplace_back((char)('A' + tmp));
+                    }
+                }
+            }
+            if(err){
+                cout << "error in encryption" << endl;
+            }
+            else{
+                for(int i = 0; i < ans.size(); i++){
+                    printf("%c", ans[i]);
+                }
+                cout << ans.size();
+                cout << endl;
+            }
+        }
+    }
+}
