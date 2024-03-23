@@ -28,7 +28,7 @@ int main() {
                 if(text[i] == ' '){
                     ans += ' ';
                 }
-                else if((text[i] == L[m] && text[i+2] == L[m+1] || (L[L.length()-1] == text[i] && L[0] == text[i+2] && m == L.length()-1)) && i+2 < (int)text.length()){
+                else if(text[i] == L[m] && text[i+2] == L[m+1] || (L[L.length()-1] == text[i] && L[0] == text[i+2] && m == L.length()-1)){
                     tmp = (text[i+1] - 'A' - N + 26) % 26;
                     ans += (char)('A' + tmp);
                     i += 2;
