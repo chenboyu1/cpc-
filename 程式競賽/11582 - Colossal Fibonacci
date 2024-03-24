@@ -1,0 +1,52 @@
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+typedef unsigned long long ull; 
+
+int f[1000+5][1000*6], period[1000+5];
+
+void table(){
+    for(int i = 2; i <= 1000; i++){
+        f[i][0] = 0, f[i][1] = 1;
+        for(int j = 2;  ; j++){
+            f[i][j] = (f[i][j-1] + f[i][j-2]) % i;
+
+            if(f[i][j] == 1 && f[i][j-1] == 0){
+                period[i] = j-1;
+                break;
+            }
+        }
+   }
+}
+
+int pow_mod(unsigned long long a, unsigned long long b, int n){
+    if(b == 0){
+        return 1;
+    }
+    int k = pow_mod(a, b/2, n);
+    k = k * k % n;
+    if(b % 2) k = k * a %n;
+    return k;
+}
+
+int main() {
+    int cas;
+    scanf("%d", &cas);
+    
+    unsigned long long a, b;
+    int n;
+    
+    table();
+
+    while(cas--)
+    {
+        cin >> a >> b >> n;
+        if(a == 0 || n == 1){
+            printf("0\n");
+            continue;
+        }
+        int tmp = pow_mod(a % period[n], b, period[n]);
+        printf("%d\n", f[n][tmp]);
+    }
+}
