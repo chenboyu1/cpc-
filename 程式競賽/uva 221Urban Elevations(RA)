@@ -1,0 +1,82 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct build{
+    bool operator< (const build &tmp)const{
+        return tmp.x > x || (tmp.x == x && tmp.y > y);
+    }
+    double x, y, w, l, h, r;
+    int id;
+};
+
+vector<build> v;
+vector<double> x;
+
+bool cover(int i, double mid){ //建築物是否有涵蓋 mid
+    return v[i].x <= mid && v[i].r >= mid;
+}
+
+bool visible(int i, double mid){
+    if(!cover(i, mid)) return false;
+
+    for(int j = 0; j < v.size(); j++){
+        if(v[i].h <= v[j].h && v[i].y > v[j].y && cover(j, mid)){ // 檢查建築物 i 是否在 mid 被擋到
+            return false;
+        }        
+    }
+
+    return true;
+}
+
+int main() {
+    int n, cas = 1;
+    while(scanf("%d", &n) && n){
+        
+        build tmp;
+        for(int i = 0; i < n; i++){
+            scanf("%lf%lf%lf%lf%lf", &tmp.x, &tmp.y, &tmp.w, &tmp.l, &tmp.h);
+            tmp.id = i + 1;
+            tmp.r = tmp.x + tmp.w;
+            v.emplace_back(tmp);
+            x.emplace_back(tmp.x);
+            x.emplace_back(tmp.r);
+        }
+        sort(v.begin(), v.end());
+        sort(x.begin(), x.end());
+        int cnt = unique(x.begin(), x.end()) - x.begin();
+        
+        if(cas != 1){
+            printf("\n\n");
+        }
+        printf("For map #%d, the visible buildings are numbered as follows:\n", cas++);
+        
+        
+        int print = 0;
+        for(int i = 0; i < n; i++){
+            bool vis = false;
+            for(int j = 0; j < cnt-1; j++){ // 檢查第 i 個建築物在 mid 能不能看到
+
+                if(visible(i, (x[j] + x[j+1]) / 2)){
+                    vis = true;
+                    break;
+                }
+            }
+            
+            if(vis){
+                if(print){
+                printf(" ");
+                }
+                else{
+                    print = 1;
+                }
+                printf("%d", v[i].id);
+            }
+        }
+        
+        v.clear();
+        x.clear();
+    }
+}
