@@ -11,7 +11,7 @@ const int rc_maxn = 20 + 5;
 
 struct edge{
     int from, to, cap, flow;
-}
+};
 
 int s, t, m, n;
 vector<edge> E;
@@ -25,15 +25,15 @@ void init(int n)
 {
     E.clear();
     for(int i = 0; i < n; i++){
-        G[i].clear;
+        G[i].clear();
     }
 }
 
 void AddEdge(int from, int to, int cap)
 {
-    E.push_back((edge{from, to, cap, 0}));
-    E.push_back((edge{to, from, 0, 0}));
-    m = E.size() - 2;
+    E.push_back((edge){from, to, cap, 0});
+    E.push_back((edge){to, from, 0, 0});
+    m = E.size();
     G[from].push_back(m-2);
     G[to].push_back(m-1);
 }
@@ -51,8 +51,8 @@ bool BFS()
         int x = Q.front(); Q.pop();
         for(int i = 0; i < G[x].size(); i++)
         {
-            edge& e = E(G[x][i]);
-            if(!vis[e.to] && e.cap < e.flow)
+            edge& e = E[G[x][i]];
+            if(!vis[e.to] && e.cap > e.flow)
             {
                 vis[e.to] = true;
                 d[e.to] = d[x] + 1;
@@ -74,7 +74,7 @@ int DFS(int x, int a)
         if(d[x]+1 == d[e.to] && (f = DFS(e.to, min(a, e.cap - e.flow))) > 0)
         {
             e.flow += f;
-            E[G[x][i]^1].flow = f;
+            E[G[x][i]^1].flow -= f;
             flow += f;
             a-= f;
             if(a == 0) break;
@@ -103,7 +103,7 @@ int main() {
     {
         int r, c;
         scanf("%d%d", &r, &c);
-        init(r+c);
+        init(r+c+1);
         s = 0, t = r+c+1;
         
         int R, C;
@@ -114,6 +114,7 @@ int main() {
             last = R;
         }
         
+        last = 0;
         for(int i = r+1; i <= r+c; i++){
             scanf("%d", &C);
             AddEdge(i, t, C-last-r);
@@ -127,7 +128,7 @@ int main() {
             }
         }
         
-        dinic_Maxflow(s, t);
+        int f = dinic_Maxflow(s, t); //printf("%d\n", f);
         printf("Matrix %d\n", Cas++);
         for(int i = 1; i <= r; i++){
             for(int j = r+1; j <= r+c; j++){
