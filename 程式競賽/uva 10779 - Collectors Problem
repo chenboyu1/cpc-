@@ -1,0 +1,145 @@
+#include <iostream>
+#include <cstring>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+const int maxn = 50 + 5;
+const int INF = 0x3f3f3f3f;
+
+struct edge{
+    int from, to, cap, flow;
+};
+
+int s, t, m, n;
+vector<edge> E;
+vector<int> G[maxn];
+bool vis[maxn];
+int d[maxn];
+int cur[maxn];
+int own[maxn][maxn];
+
+void init(int n)
+{
+    E.clear();
+    for(int i = 0; i < n; i++){
+        G[i].clear();
+    }
+}
+
+void AddEdge(int from, int to, int cap)
+{
+    E.push_back((edge){from, to, cap, 0});
+    E.push_back((edge){to, from, 0, 0});
+    m = E.size();
+    G[to].push_back(m-1);
+    G[from].push_back(m-2);
+}
+
+bool BFS()
+{
+    memset(vis, false, sizeof(vis));
+    queue<int> Q;
+    Q.push(s);
+    vis[s] = true;
+    d[s] = 0;
+    
+    while(!Q.empty())
+    {
+        int x = Q.front(); Q.pop();
+        for(int i = 0; i < G[x].size(); i++)
+        {
+            edge& e = E[G[x][i]];
+            if(!vis[e.to] && e.cap > e.flow)
+            {
+                vis[e.to] = true;
+                d[e.to] = d[x] + 1;
+                Q.push(e.to);
+            }
+        }
+    }
+    return vis[t];
+}
+
+int DFS(int x, int a)
+{
+    if(x == t || a == 0)
+        return a;
+        
+    int flow = 0, f;
+    for(int& i = cur[x]; i < G[x].size(); i++){
+        edge& e = E[G[x][i]];
+        if(d[x]+1 == d[e.to] && (f = DFS(e.to, min(a, e.cap - e.flow))) > 0)
+        {
+            e.flow += f;
+            flow += f;
+            E[G[x][i] ^ 1].flow -= f;
+            a-= f;
+            if(a == 0) break;
+        }
+    }
+    return flow;
+}
+
+int dinic_Maxflow(int s, int t)
+{
+    int flow = 0;
+    while(BFS())
+    {
+        memset(cur, 0, sizeof(cur));
+        flow += DFS(s, INF);
+    }
+    return flow;
+}
+
+int main() {
+    int cas;
+    scanf("%d", &cas);
+    int Cas = 1;
+    
+    while(cas--)
+    {
+        int n, m;
+        scanf("%d%d", &n, &m);
+        init(n+m);
+        s = 0, t = n+m; n--;
+        int id = 1;
+        
+        int num, ticket[m+1] = {0}, T;
+        scanf("%d", &num);
+        for(int i = 1; i <= num; i++){ // Bob
+            scanf("%d", &T);
+            ticket[T]++;
+        }
+        for(int i = 1; i <= m; i++){
+            if(ticket[i]){
+                AddEdge(s, i, ticket[i]);
+            }
+        }
+        id = 1 + m;
+        while(n--){    // other
+            scanf("%d", &num);
+            memset(ticket, 0, sizeof(ticket));
+            for(int i = 1; i <= num; i++){
+                scanf("%d", &T);
+                ticket[T]++;
+            }
+            for(int i = 1; i <= m; i++){
+                if(ticket[i] > 1){
+                    AddEdge(id, i, ticket[i]-1);
+                }
+                else if(ticket[i] == 0){
+                    AddEdge(i, id, 1);
+                }
+            }
+            id++;
+        }
+        for(int i = 1; i <= m; i++){
+            AddEdge(i, t, 1);
+        }
+        
+        int f = dinic_Maxflow(s, t); //printf("%d\n", f);
+        printf("Case #%d: %d\n", Cas++, f);
+    }
+}
