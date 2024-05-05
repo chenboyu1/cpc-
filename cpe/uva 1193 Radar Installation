@@ -1,0 +1,56 @@
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+
+struct Pos{
+    double x;
+    double y;
+    bool operator< (const Pos &tmp)const{
+        return tmp.x > x;
+    }
+}pos[1000+5];
+
+
+int main() {
+    int n, cas = 1;
+    double d;
+    while(scanf("%d%lf", &n, &d) && n && d)
+    {
+        int r = 0;
+        for(int i = 0; i < n; i++){
+            scanf("%lf%lf", &pos[i].x, &pos[i].y);
+            if(pos[i].y > d){
+                r = -1;
+            }
+        }
+        
+        if(r == -1){
+            printf("Case %d: -1\n", cas++);
+            continue;
+        }
+        
+        sort(pos, pos+n);
+        for(int i = 0; i < n; i++){
+            double tmp = sqrt(d*d - pos[i].y*pos[i].y) + 1e-8;
+            double x = pos[i].x;
+            pos[i].x = x - tmp;
+            pos[i].y = x + tmp;
+        }
+        
+        double x = -(1e+60);
+        int idx = 0, cnt = 0;
+        while(idx < n)
+        {
+            while(pos[idx].x <= x && idx < n){
+                x = min(x, pos[idx].y);
+                idx++;
+            }
+            x = pos[idx].y;
+            cnt++;
+        }
+        printf("Case %d: %d\n", cas++, cnt-1);
+    }
+    
+}
