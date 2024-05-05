@@ -1,0 +1,92 @@
+#include <iostream>
+#include <cstring>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int list[10+5];
+
+int main() {
+    int r, c;
+    int n;
+    int idx = 1;
+    while(scanf("%d%d", &r, &c) && r && c)
+    {
+    	printf("Spreadsheet #%d\n", idx++);
+        vector<vector<int>> sh;
+        vector<int> row;
+        int cnt = 0;
+        for(int i = 0; i < r; i++){
+        	for(int j = 0 ;j < c; j++){
+        		row.push_back(cnt++);
+			}
+			sh.push_back(row);
+			row.clear();
+		}
+
+        string s;
+        scanf("%d", &n);
+        for(int i = 0 ; i < n; i++){
+            cin >> s;
+            if(s != "EX"){
+                int t;
+                scanf("%d", &t);
+                for(int j = 0; j < t; j++){
+                    scanf("%d", &list[j]);
+                    list[j]--;
+                }
+                sort(list, list+t);
+                if(s == "DR"){
+                    for(int j = 0; j < t; j++){
+                    	sh.erase(sh.begin() + list[j] - j); // (位置 )
+					}
+                }
+                else if(s == "DC"){
+                    for(int j = 0; j < t; j++){
+                    	for(int k = 0; k < sh.size(); k++){
+                    		sh[k].erase(sh[k].begin() + list[j] - j);
+						}
+					}
+                }
+                else if(s == "IR"){
+                    for(int j = 0; j < t; j++){
+                    	sh.insert(sh.begin() + list[j] + j, vector<int>(sh[0].size(), -1));
+					}
+                }
+                else{
+                	for(int j = 0; j < t; j++){
+                    	for(int k = 0; k < sh.size(); k++){
+                    		sh[k].insert(sh[k].begin() + list[j] + j, -1);
+						}
+					}
+                }
+            }
+            else{
+                int r1, c1, r2, c2;
+                scanf("%d%d%d%d", &r1, &c1, &r2, &c2);
+                swap(sh[r1-1][c1-1], sh[r2-1][c2-1]);
+            }
+        }
+        int m, r1, c1;
+        scanf("%d", &m);
+        for(int i = 0; i < m; i++){
+            scanf("%d %d", &r1, &c1);
+            
+            int find = 0;
+            for(int j = 0; j < sh.size(); j++){
+            	for(int k = 0; k < sh[j].size(); k++){
+            		if(sh[j][k] == ((r1-1)*c + (c1-1))){
+            			printf("Cell data in (%d,%d) moved to (%d,%d)\n", r1, c1, j+1, k+1);
+						find = 1;
+						break;
+					}
+		            	
+				}
+			}
+            if(!find){
+            	printf("Cell data in (%d,%d) GONE\n", r1, c1);
+			}
+        }
+    }
+}
