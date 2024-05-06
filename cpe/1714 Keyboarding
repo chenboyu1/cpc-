@@ -1,0 +1,102 @@
+#include <iostream>
+#include <queue>
+#include <cstring>
+
+using namespace std;
+
+int r, c;
+string key[50+5];
+int d[4][2] = {0, 1, 0, -1, 1, 0, -1, 0};
+int next_to[55][55][4][2];
+int vis[55][55];
+struct Node{
+    int x, y, now, step;
+};
+
+void next_to_go(){
+    int x, y;
+    for(int i = 0; i < r; i++){
+        for(int j = 0; j < c; j++){
+            for(int k = 0; k < 4; k++){
+                x = i + d[k][0];
+                y = j + d[k][1];
+                
+                if(x < 0 || x >= r || y < 0 || y >= c){
+                    next_to[i][j][k][0] = -1;
+                    next_to[i][j][k][1] = -1;
+                    continue;
+                }
+                
+                int flag = 0;
+                while(key[i][j] == key[x][y]){
+                    x += d[k][0];
+                    y += d[k][1];
+                    
+                    if(x < 0 || x >= r || y < 0 || y >= c){
+                        next_to[i][j][k][0] = -1;
+                        next_to[i][j][k][1] = -1;
+                        flag = 1;
+                        break;
+                    }
+                }
+                if(!flag){
+                    next_to[i][j][k][0] = x;
+                    next_to[i][j][k][1] = y;
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    string goal;
+    
+    while(scanf("%d%d", &r, &c) != EOF)
+    {
+        memset(vis, -1, sizeof(vis));
+        
+        for(int i = 0; i < r; i++){
+            cin >> key[i];
+        }
+        cin >> goal;
+        goal += "*";
+        
+        next_to_go();
+        queue<Node> q;
+        int ans = 0;
+        q.push(Node{0, 0, 0, 0});
+        while(!q.empty()){
+            Node tmp = q.front();
+            q.pop();
+            if(key[tmp.x][tmp.y] == goal[tmp.now]){
+                if(tmp.now >= goal.size() - 1){
+                    ans = tmp.step + 1;
+                    break;
+                }
+                
+                tmp.step++;
+                tmp.now++;
+                vis[tmp.x][tmp.y] = tmp.now;
+                q.push(tmp);
+            }
+            else{
+                for(int i = 0; i < 4; i++){
+                    int x = next_to[tmp.x][tmp.y][i][0];
+                    int y = next_to[tmp.x][tmp.y][i][1];
+                    
+                    if(x < 0 || x >= r || y < 0 || y >= c){
+                        continue;
+                    }
+                    if(vis[x][y] >= tmp.now){
+                        continue;
+                    }
+                    vis[x][y] = tmp.now;
+                    Node n = Node{x, y, tmp.now, tmp.step+1};
+                    q.push(n);
+                }
+            }
+        }
+        printf("%d\n", ans);
+
+    }
+}
