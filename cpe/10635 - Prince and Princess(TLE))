@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int pr[62500+5];
+int qr[62500+5];
+int dp[2+5][62500+5];
+
+int main() {
+    int cas, Case = 1;
+    scanf("%d", &cas);
+    
+    while(cas--)
+    {
+        int n, p, q;
+        scanf("%d%d%d", &n, &p, &q);
+        p++, q++;
+        for(int i = 1; i <= p; i++){
+            scanf("%d", &pr[i]);
+        }
+        for(int i = 1; i <= q; i++){
+            scanf("%d", &qr[i]);
+        }
+        // lcs
+        memset(dp, 0, sizeof(dp));
+        for(int i = 1; i <= q; i++){
+            for(int j = 1; j <= p; j++){
+                if(i % 2){
+                    if(qr[i] == pr[j])
+                        dp[1][j] = dp[0][j-1] + 1;
+                    else
+                        dp[1][j] = max(dp[0][j], dp[1][j-1]);
+                    //printf("%d ", dp[1][j]);
+                }
+                else{
+                    if(qr[i] == pr[j])
+                        dp[0][j] = dp[1][j-1] + 1;
+                    else
+                        dp[0][j] = max(dp[1][j], dp[0][j-1]);
+                    //printf("%d ", dp[0][j]);
+                }
+                
+            }
+            //printf("\n");
+        }
+        printf("Case %d: ", Case++);
+        if(q % 2)
+            printf("%d\n", dp[1][p]);
+        else
+            printf("%d\n", dp[0][p]);
+    }
+}
