@@ -1,0 +1,99 @@
+#include <bits/stdc++.h>
+#define INF 0x3f3f3f3f
+
+using namespace std;
+
+int sat[40+5];
+int sp[40+5][40+5];
+int mid[40+5][40+5][40+5];
+int chk[40+5];
+
+int main() {
+    int n;
+    while(~scanf("%d", &n)){
+        string v, w, ww;
+
+        memset(mid, 0, sizeof(mid));
+        
+        for(int i = 1; i <= n; i++){
+            for(int j = 1; j <= n; j++){
+                sp[i][j] = INF;
+            }
+        }
+        
+        cin >> ws;
+        for(int i = 1; i <= n; i++){
+            getline(cin, v);
+			stringstream ss(v);
+			
+            while(getline(ss, ww, ' ')){
+
+            	//cout << ww << endl;
+            	int tmp = stoi(ww);
+                sp[i][tmp] = 1;
+            }
+            
+        }
+        
+        for(int i = 1; i <= n; i++){
+            for(int j = 1; j <= n; j++){
+                for(int k = j+1; k <= n; k++){
+                    if(sp[j][k] > sp[j][i] + sp[i][k]){
+                        sp[j][k] = sp[j][i] + sp[i][k];
+                    }
+                }
+            }
+        }
+        
+        for(int i = 1; i <= n; i++){
+            for(int j = 1; j <= n; j++){
+                for(int k = j+1; k <= n; k++){
+                    if(sp[j][k] == sp[j][i] + sp[i][k]){
+                        mid[j][k][i] = 1;
+                    }
+                }
+            }
+        }
+        
+        int cas;
+        scanf("%d", &cas);
+        cin >> ws;
+        while(cas--)
+        {
+            memset(sat, 0, sizeof(sat));
+            memset(chk, 0, sizeof(chk));
+            getline(cin, v);
+            stringstream ss(v);
+            while(getline(ss, ww, ' ')){
+            	int tmp = stoi(ww);
+                sat[tmp] = 1;
+            }
+            /*for(int i = 1; i <= n; i++){
+            	printf("%d ", sat[i]);
+			}*/
+            for(int i = 1; i <= n; i++){
+                for(int j = i+1; j <= n; j++){
+                    for(int k = 1; k <= n; k++){
+                        if(sat[i] && sat[j] && mid[i][j][k]){
+                            chk[k] = 1;
+                            
+                        }
+                    }
+                }
+            }
+
+            bool isgeo = 1;
+            for(int i = 1; i <= n; i++){
+                if(!sat[i] && !chk[i]){
+                    printf("no\n");
+                    isgeo = 0;
+                    break;
+                }
+                
+            }
+            if(isgeo){
+                printf("yes\n");
+            }
+        }
+    }
+}
