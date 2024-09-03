@@ -1,0 +1,31 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+string pre, in;
+int len;
+
+void solve(int k, int left, int right){
+    if(left > right || k >= len) return;
+    
+    if(left == right){
+        printf("%c", in[left]);
+    }
+    else{
+        for(int i = left; i <= len; i++){
+            if(pre[k] == in[i]){
+                solve(k+1, left, i-1);
+                solve(k + (i-left) + 1, i+1, right);
+                printf("%c", pre[k]);
+            }
+        }
+    }
+}
+
+int main() {
+    
+    cin >> pre >> in;
+    
+    len = pre.size();
+    solve(0, 0, len-1);
+}
