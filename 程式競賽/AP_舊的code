@@ -1,0 +1,97 @@
+// uva 315
+#include<bits/stdc++.h>
+#define LL long long int
+
+using namespace std;
+
+const int N = 105;
+vector<int> va[N], bcc[N];                       // clear
+LL dep[N], low[N], bccno[N], time_cnt, bcc_cnt; // set dep low -1 else 0
+bitset<N> is_AP;  // 0
+int ans;
+struct Edge
+{
+    int s, t;
+};
+stack<Edge> st; // clear
+int dfs(int s, int fa)
+{
+    int child = 0;
+    dep[s] = low[s] = time_cnt++;
+    for (auto t : va[s])
+    {
+        Edge e = (Edge){s, t};
+        if (dep[t] == -1)
+        {
+            st.push(e);
+            child++;
+            dfs(t, s);
+            low[s] = min(low[s], low[t]);
+            if (dep[s] <= low[t])
+            {
+                is_AP[s] = 1;
+                bcc_cnt++;
+                bcc[bcc_cnt].clear();
+                while (1)
+                {
+                    Edge x = st.top();
+                    st.pop();
+                    if (bccno[x.s] != bcc_cnt)
+                    {
+                        bcc[bcc_cnt].push_back(x.s);
+                        bccno[x.s] = bcc_cnt;
+                    }
+                    if (bccno[x.t] != bcc_cnt)
+                    {
+                        bcc[bcc_cnt].push_back(x.t);
+                        bccno[x.t] = bcc_cnt;
+                    }
+                    if (x.s == s && x.t == t)
+                        break;
+                }
+            }
+        }
+        else if (low[s] > dep[t])
+        {
+            st.push(e);
+            low[s] = dep[t];
+        }
+    }
+    if (fa < 0 && child == 1)
+        is_AP[s] = 0;
+    return low[s];
+}
+
+void init(){
+    for(int i = 0; i < 105; i++){
+        va[i].clear();
+        bcc[i].clear();
+    }
+}
+
+int main(){
+    int n;
+    while(scanf("%d", &n) && n)
+    {
+        cin.ignore();
+        init();
+        memset(dep, -1, sizeof(dep));
+        memset(low, -1, sizeof(low));
+        memset(bccno, 0, sizeof(bccno));
+        ans = 0;
+        string str;
+		while (getline(cin, str)) {
+			stringstream ss(str);
+			int u, v;
+			
+			ss >> u;
+			if (!u) break;
+			while (ss >> v) va[v].emplace_back(u), va[u].emplace_back(v);
+		}
+		dfs(1, -1);
+		for(int i = 1; i <= n; i++){
+		    if(is_AP[i]) ans++;
+		}
+		printf("%d\n", ans);
+    }
+}
